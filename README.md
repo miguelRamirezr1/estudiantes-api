@@ -210,7 +210,7 @@ dependencies {
 ## Project Structure
 
 ```
-estudiantes-api/
+Student-Management-REST-API/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/devops/estudiantes/
@@ -255,8 +255,8 @@ HTTP Request → Controller → Service → Repository → In-Memory Storage (Co
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/estudiantes-api.git
-cd estudiantes-api
+git clone https://github.com/miguelRamirezr1/Student-Management-REST-API.git
+cd Student-Management-REST-API
 ```
 
 ### Install Dependencies
