@@ -1,0 +1,64 @@
+name: Create Release
+
+# This workflow runs when you push a new tag (e.g., v1.0.0)
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on tags like v1.0.0, v1.1.0, v2.0.0, etc.
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to create releases
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Step 3: Make gradlew executable (for Linux/Mac)
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Step 4: Build the project with Gradle
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # Step 5: Get the version from the tag (e.g., v1.0.0 → 1.0.0)
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      # Step 6: Create GitHub Release and upload JAR
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/libs/*.jar
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## Student Management REST API - Release ${{ steps.get_version.outputs.VERSION }}
+            
+            ### How to Run
+            1. Download the JAR file below
+            2. Ensure Java 21 is installed: `java -version`
+            3. Run: `java -jar estudiantes-api-*.jar`
+            4. API will be available at `http://localhost:8080`
+            
+            ### API Endpoints
+            - `POST /estudiantes` - Register a new student
+            - `GET /estudiantes` - Retrieve all students
+            
+            See the [README](https://github.com/${{ github.repository }}) for full documentation.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
